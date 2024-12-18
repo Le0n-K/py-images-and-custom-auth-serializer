@@ -42,6 +42,7 @@ class MovieSerializer(serializers.ModelSerializer):
             "actors",
             "image"
         )
+        read_only_fields = ("id", "image")
 
 
 class MovieImageSerializer(serializers.ModelSerializer):
@@ -49,13 +50,6 @@ class MovieImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = ("id", "image")
-        read_only_fields = ("id",)
-
-        def update(self, instance, validated_data):
-            if "image" in validated_data:
-                instance.image = validated_data["image"]
-                instance.save()
-            return instance
 
 
 class MovieListSerializer(MovieSerializer):
@@ -65,7 +59,6 @@ class MovieListSerializer(MovieSerializer):
     actors = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="full_name"
     )
-    # image = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Movie
@@ -78,6 +71,7 @@ class MovieListSerializer(MovieSerializer):
             "actors",
             "image"
         )
+        read_only_fields = ("id", "image")
 
 
 class MovieDetailSerializer(MovieSerializer):
@@ -100,7 +94,7 @@ class MovieDetailSerializer(MovieSerializer):
 class MovieSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovieSession
-        fields = ("id", "show_time", "movie", "cinema_hall")
+        fields = ("id", "show_time", "movie", "cinema_hall",)
 
 
 class MovieSessionListSerializer(MovieSessionSerializer):

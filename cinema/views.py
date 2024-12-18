@@ -23,7 +23,8 @@ from cinema.serializers import (
     MovieSessionDetailSerializer,
     MovieListSerializer,
     OrderSerializer,
-    OrderListSerializer, MovieImageSerializer,
+    OrderListSerializer,
+    MovieImageSerializer,
 )
 
 
@@ -103,10 +104,10 @@ class MovieViewSet(
         if self.action == "retrieve":
             return MovieDetailSerializer
 
-        if self.action == "upload_movie":
+        if self.action == "upload_image":
             return MovieImageSerializer
 
-        return self.serializer_class
+        return MovieSerializer
 
     @action(
         methods=["POST"],
@@ -119,25 +120,12 @@ class MovieViewSet(
         serializer = self.get_serializer(
             movie,
             data=request.data,
-            partial=True
         )
-        if serializer.is_valid():
+        if serializer.is_valid():   # raise exception = True
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def create(self, request, *args, **kwargs):
-        # Remove 'image' from request.data if it's present
-        mutable_data = request.data.copy()
-        mutable_data.pop("image", None)
-        serializer = self.get_serializer(data=mutable_data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
